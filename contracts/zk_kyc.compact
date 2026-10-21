@@ -1,0 +1,20 @@
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+export ledger totalVerifications: Counter;
+
+export witness getPrivateBirthYear(): Uint<16>;
+export witness getPrivateCountryCode(): Uint<16>;
+
+export circuit verifyIdentity(currentYear: Uint<16>, bannedCountryCode: Uint<16>): Boolean {
+    const birthYear = getPrivateBirthYear();
+    const countryCode = getPrivateCountryCode();
+
+    const age = currentYear - birthYear;
+    assert(age >= 18, "Nguoi dung chua du 18 tuoi");
+    assert(countryCode != bannedCountryCode, "Quoc tich nam trong danh sach cam");
+
+    totalVerifications.increment(1);
+    return true;
+}
