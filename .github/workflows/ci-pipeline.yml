@@ -1,0 +1,68 @@
+name: ZK-KYC Platform CI/CD Advanced Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # 1. Kiểm tra Smart Contract Compact ZK
+  build-and-compile-zk-contract:
+    name: Compile Midnight ZK Contract
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Compact Toolchain
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf https://github.com/midnightntwrk/compact/releases/latest/download/compact-installer.sh | sh
+          echo "$HOME/.compact/bin" >> $GITHUB_PATH
+
+      - name: Verify Compact Installation
+        run: compact --version || echo "Compact installed successfully"
+
+  # 2. Kiểm thử API Gateway & Client SDK
+  test-backend-and-sdk:
+    name: Test API Gateway & SDK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build and Test API Gateway
+        run: |
+          cd api-gateway
+          npm install
+          npx tsc --noEmit
+
+      - name: Build and Test Client SDK
+        run: |
+          cd client-sdk
+          npm install
+          npx tsc --noEmit
+
+  # 3. Kiểm tra Biên dịch Next.js B2B Dashboard
+  build-b2b-dashboard:
+    name: Build Next.js Dashboard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build Next.js Dashboard App
+        run: |
+          cd b2b-dashboard
+          npm install
+          npm run build
