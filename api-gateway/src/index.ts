@@ -1,4 +1,5 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -23,10 +24,10 @@ app.post('/api/v1/verify-zk-kyc', async (req: Request, res: Response) => {
 
     // 1. Kiểm tra API Key của doanh nghiệp
     if (!apiKey) {
-      return res.status(401).json({ success: false, error: 'Thieu API Key B2B. Vui long kiem tra header x-api-key.' });
+      return res.status(401).json({ success: false, error: 'Thieu API Key B2B. Vui long kiem tra header x-api-key' });
     }
 
-    // 2. Gia lap verify ZK Proof (Se ket noi Midnight Proof Server o giai doan sau)
+    // 2. Giả lập verify ZK Proof (Sẽ kết nối Midnight Proof Server ở giai đoạn sau)
     console.log(`[ZK-Engine] Dang xac thuc Proof voi API Key: ${apiKey}`);
 
     // Giả lập kết quả thành công mà KHÔNG lưu hay tiết lộ dữ liệu cá nhân
